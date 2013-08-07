@@ -74,3 +74,17 @@ Then /^I should see all of the movies/ do
     flunk "Not all movies are on the page"
   end
 end
+
+Then /^on the movies page I should see a listing of movies according to the last ratings selected/ do
+  has_rating = false
+  Movie.all_ratings.each do |rating|
+    page_element = page.find_by_id("ratings_#{rating}")
+    if page_element.checked?
+      has_rating = true
+    end
+  end
+  has_rating.should be_true
+#  if has_rating != true
+#    flunk "An empty rating selection must revert to the last set of selected ratings"
+#  end
+end

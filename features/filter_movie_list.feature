@@ -36,6 +36,9 @@ Scenario: restrict to movies with 'PG' or 'R' ratings
 
 Scenario: no ratings selected
   # see assignment
+  When I uncheck the following ratings: G, PG, PG-13, R
+  And I click on the "ratings" submit button
+  Then on the movies page I should see a listing of movies according to the last ratings selected
 
 Scenario: all ratings selected
   # see assignment
