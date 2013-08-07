@@ -103,3 +103,18 @@ Then /^the movies must be listed alphabetically/ do
     end
   end
 end
+
+Then /^the movies must be listed in increasing order of release date/ do
+  date = nil
+  # Select all of the TD tags associated with the list of movie titles.
+  movie_dates = page.all(:xpath, '//tbody/tr/td[3]')
+  movie_dates.each do |movie_date|
+    if date == nil
+      date = Date.parse movie_date.text
+    else
+      if (date <=> Date.parse(movie_date.text)) != -1 
+        flunk "The movies are not sorted in increasing order of release date"
+      end
+    end
+  end
+end
