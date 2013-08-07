@@ -88,3 +88,18 @@ Then /^on the movies page I should see a listing of movies according to the last
 #    flunk "An empty rating selection must revert to the last set of selected ratings"
 #  end
 end
+
+Then /^the movies must be listed alphabetically/ do
+  title = nil
+  # Select all of the TD tags associated with the list of movie titles.
+  movie_titles = page.all(:xpath, '//tbody/tr/td[1]')
+  movie_titles.each do |movie_title|
+    if title == nil
+      title = movie_title
+    else
+      if (title.text <=> movie_title.text) != -1
+        flunk "The movies are not sorted alphabetically"
+      end
+    end
+  end
+end
