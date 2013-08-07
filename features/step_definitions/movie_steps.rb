@@ -9,7 +9,7 @@ Given /the following movies exist/ do |movies_table|
     #   puts movie.to_s
     #   puts movie[:title] 
 
-    # Be considerate and avoid adding duplicate entries to
+    # Be considerate and avoid adding duplicate entries to the database.
     movie_entry = Movie.where(title: movie[:title])
 
     if movie_entry == nil
