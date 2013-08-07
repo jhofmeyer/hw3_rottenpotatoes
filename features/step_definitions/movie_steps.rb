@@ -4,8 +4,23 @@ Given /the following movies exist/ do |movies_table|
   movies_table.hashes.each do |movie|
     # each returned element will be a hash whose key is the table header.
     # you should arrange to add that movie to the database here.
+
+    # One may output content to the console for debugging as follows:
+    #   puts movie.to_s
+    #   puts movie[:title] 
+
+    # Be considerate and avoid adding duplicate entries to
+    movie_entry = Movie.where(title: movie[:title])
+
+    if movie_entry == nil
+      movie_entry = Movie.create movie
+
+      if movie_entry == nil
+        flunk "Error creating a required movie entry titled #{movie[:title]}."
+      end
+    end
   end
-  flunk "Unimplemented"
+  #  flunk "Unimplemented"
 end
 
 # Make sure that one string (regexp) occurs before or after another one
