@@ -8,17 +8,7 @@ Given /the following movies exist/ do |movies_table|
     # One may output content to the console for debugging as follows:
     #   puts movie.to_s
     #   puts movie[:title] 
-
-    # Be considerate and avoid adding duplicate entries to the database.
-    movie_entry = Movie.where(title: movie[:title])
-
-    if movie_entry == nil
-      movie_entry = Movie.create movie
-
-      if movie_entry == nil
-        flunk "Error creating a required movie entry titled #{movie[:title]}."
-      end
-    end
+    Movie.create(movie)
   end
   #  flunk "Unimplemented"
 end
@@ -40,4 +30,47 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   # HINT: use String#split to split up the rating_list, then
   #   iterate over the ratings and reuse the "When I check..." or
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
+  rating_list.split(%r{,\s*}).each do |rating|
+    page_element = page.find_by_id("ratings_#{rating}")
+    if uncheck == nil
+      if !page_element.checked?
+        page.check("ratings_#{rating}")
+      end
+    else
+      if page_element.checked?
+        page.uncheck("ratings_#{rating}")
+      end
+    end
+  end
+end
+
+And /^I click on the "(.*?)" submit button$/ do |button|
+  page_element = page.find_by_id("#{button}_submit")
+  page_element.click
+end
+
+Then /^on the (.*) page I should (not )?see movies with ratings: (.*)/ do |page_name, exclude, rating_list|
+  visit path_to(page_name)
+  rating_list.split(%r{,\s*}).each do |rating|
+    page_element = page.find_by_id("ratings_#{rating}")
+    if exclude == nil
+      if !page_element.checked?
+        flunk "Invalid check state for rating"
+      end
+    else
+      if page_element.checked?
+        flunk "Invalid check state for excluded rating"
+      end
+    end
+  end
+end
+
+Then /^I should see all of the movies/ do
+  # Select all the movies.
+  movies     = Movie.all
+  # Select all of the TR tags associated with the list of movies.
+  movie_rows = page.all(:xpath, '//tbody/tr')
+  if movies.length() != movie_rows.length()
+    flunk "Not all movies are on the page"
+  end
 end
